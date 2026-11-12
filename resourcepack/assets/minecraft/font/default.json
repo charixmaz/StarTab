@@ -8,6 +8,96 @@
       "chars": [
         ""
       ]
+    },
+    {
+      "type": "bitmap",
+      "file": "novara:font/rank_i.png",
+      "ascent": 9,
+      "height": 11,
+      "chars": [
+        ""
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "novara:font/rank_ii.png",
+      "ascent": 9,
+      "height": 11,
+      "chars": [
+        ""
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "novara:font/rank_iii.png",
+      "ascent": 9,
+      "height": 11,
+      "chars": [
+        ""
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "novara:font/rank_iv.png",
+      "ascent": 9,
+      "height": 11,
+      "chars": [
+        ""
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "novara:font/rank_v.png",
+      "ascent": 9,
+      "height": 11,
+      "chars": [
+        ""
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "novara:font/rank_vi.png",
+      "ascent": 9,
+      "height": 11,
+      "chars": [
+        ""
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "novara:font/rank_vii.png",
+      "ascent": 9,
+      "height": 11,
+      "chars": [
+        ""
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "novara:font/rank_viii.png",
+      "ascent": 9,
+      "height": 11,
+      "chars": [
+        ""
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "novara:font/rank_ix.png",
+      "ascent": 9,
+      "height": 11,
+      "chars": [
+        ""
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "novara:font/rank_x.png",
+      "ascent": 9,
+      "height": 11,
+      "chars": [
+        ""
+      ]
     }
   ]
 }

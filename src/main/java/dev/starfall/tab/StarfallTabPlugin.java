@@ -211,6 +211,8 @@ public final class StarfallTabPlugin extends JavaPlugin implements Listener, Com
         Set<String> inherited = getLuckPermsGroups(player);
         for (Group group : groups) {
             if (group.id.equalsIgnoreCase("default")) continue;
+            // Ignore old rank1..rank10 LP TAB groups: use actual Novara progression instead.
+            if (group.id.matches("rank(?:10|[1-9])")) continue;
             if (!group.permission.isEmpty() && player.hasPermission(group.permission)) return group;
             for (String name : group.lpNames) if (inherited.contains(name)) return group;
         }

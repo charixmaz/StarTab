@@ -4,7 +4,7 @@ version: '1.0.0'
 description: Custom Starfall TAB player list
 api-version: '26.1'
 author: Starfall
-softdepend: [LuckPerms, PlaceholderAPI]
+softdepend: [LuckPerms, PlaceholderAPI, NovaraRanksTags]
 commands:
   starfalltab:
     description: Starfall TAB commands

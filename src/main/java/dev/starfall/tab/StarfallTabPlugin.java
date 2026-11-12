@@ -31,6 +31,17 @@ public final class StarfallTabPlugin extends JavaPlugin implements Listener, Com
     private Method papiMethod;
     private Method lpGet, lpUserManager, lpUser, lpInherited, lpGroupName;
     private Object lpOptions;
+    private org.bukkit.plugin.Plugin cachedRanks;
+    private Method progressionRankMethod, progressionBadgeMethod;
+    private boolean rankWarningShown;
+    private record ProgressionDisplay(int rank,String badge,boolean integrated) {
+        String roman(){return switch(rank) {
+            case 1 -> "I"; case 2 -> "II"; case 3 -> "III"; case 4 -> "IV";
+            case 5 -> "V"; case 6 -> "VI"; case 7 -> "VII"; case 8 -> "VIII";
+            case 9 -> "IX"; case 10 -> "X";
+            default -> "I";
+        };}
+    }
 
     @Override public void onEnable() {
         saveDefaultConfig();
@@ -89,6 +100,11 @@ public final class StarfallTabPlugin extends JavaPlugin implements Listener, Com
             refreshTask = null;
         }
         reloadConfig();
+        // Migrate only StarTab's old shipped name-format; retain customized templates.
+        if ("%prefix%&f%player%".equals(getConfig().getString("name-format",""))) {
+            getConfig().set("name-format","%novara_rank_badge% %prefix%&f%player%");
+            saveConfig();
+        }
         readGroups();
         if (!getConfig().getBoolean("enabled", true)) {
             restoreOriginals();
@@ -145,20 +161,25 @@ public final class StarfallTabPlugin extends JavaPlugin implements Listener, Com
         List<Player> online = new ArrayList<>(Bukkit.getOnlinePlayers());
         if (online.isEmpty()) return;
         Map<UUID, Group> assigned = new HashMap<>();
+        Map<UUID, ProgressionDisplay> progression = new HashMap<>();
         for (Player player : online) {
             assigned.put(player.getUniqueId(), findGroup(player));
+            progression.put(player.getUniqueId(), resolveProgression(player));
             originals.computeIfAbsent(player.getUniqueId(), id ->
                 new Original(player.getPlayerListName(), player.getPlayerListHeader(),
                     player.getPlayerListFooter(), player.getPlayerListOrder()));
         }
 
         online.sort(Comparator.comparingInt((Player p) -> assigned.get(p.getUniqueId()).priority)
+            .thenComparingInt(p -> -progression.get(p.getUniqueId()).rank())
             .thenComparing(p -> p.getName().toLowerCase(Locale.ROOT)));
 
         int order = 1;
         for (Player target : online) {
             Group group = assigned.get(target.getUniqueId());
-            String name = color(expand(target, getConfig().getString("name-format", "%prefix%&f%player%"), group));
+            String name = color(expand(target,
+                getConfig().getString("name-format", "%novara_rank_badge% %prefix%&f%player%"),
+                group, progression.get(target.getUniqueId())));
             RenderCache old = rendered.computeIfAbsent(target.getUniqueId(), id -> new RenderCache());
             if (!Objects.equals(old.name, name)) {
                 target.setPlayerListName(name);
@@ -175,8 +196,8 @@ public final class StarfallTabPlugin extends JavaPlugin implements Listener, Com
         String footerTemplate = String.join("\n", getConfig().getStringList("footer"));
         for (Player viewer : online) {
             Group group = assigned.get(viewer.getUniqueId());
-            String header = color(expand(viewer, headerTemplate, group));
-            String footer = color(expand(viewer, footerTemplate, group));
+            String header = color(expand(viewer, headerTemplate, group, progression.get(viewer.getUniqueId())));
+            String footer = color(expand(viewer, footerTemplate, group, progression.get(viewer.getUniqueId())));
             RenderCache old = rendered.get(viewer.getUniqueId());
             if (!Objects.equals(old.header, header) || !Objects.equals(old.footer, footer)) {
                 viewer.setPlayerListHeaderFooter(header, footer);
@@ -190,6 +211,8 @@ public final class StarfallTabPlugin extends JavaPlugin implements Listener, Com
         Set<String> inherited = getLuckPermsGroups(player);
         for (Group group : groups) {
             if (group.id.equalsIgnoreCase("default")) continue;
+            // Ignore old rank1..rank10 LP TAB groups: use actual Novara progression instead.
+            if (group.id.matches("rank(?:10|[1-9])")) continue;
             if (!group.permission.isEmpty() && player.hasPermission(group.permission)) return group;
             for (String name : group.lpNames) if (inherited.contains(name)) return group;
         }
@@ -214,10 +237,51 @@ public final class StarfallTabPlugin extends JavaPlugin implements Listener, Com
         }
     }
 
-    private String expand(Player player, String raw, Group group) {
+    /** Read the real earned Novara rank, not an arbitrary LuckPerms TAB group. */
+    private ProgressionDisplay resolveProgression(Player player) {
+        var ranks = Bukkit.getPluginManager().getPlugin("NovaraRanksTags");
+        if (ranks == null || !ranks.isEnabled()) {
+            cachedRanks=null;
+            progressionRankMethod=null;
+            progressionBadgeMethod=null;
+            return new ProgressionDisplay(1,"&7[I]",false);
+        }
+        try {
+            if (ranks!=cachedRanks || progressionRankMethod==null || progressionBadgeMethod==null) {
+                cachedRanks=ranks;
+                progressionRankMethod=ranks.getClass().getMethod("progressionRank",UUID.class);
+                progressionBadgeMethod=ranks.getClass().getMethod("progressionBadge",UUID.class);
+                rankWarningShown=false;
+            }
+            int number=((Number)progressionRankMethod.invoke(ranks,player.getUniqueId())).intValue();
+            String badge=(String)progressionBadgeMethod.invoke(ranks,player.getUniqueId());
+            if(number<1||number>10||badge==null||badge.isBlank())
+                throw new IllegalStateException("Invalid rank badge response");
+            return new ProgressionDisplay(number,badge,true);
+        } catch(ReflectiveOperationException | RuntimeException e) {
+            if(!rankWarningShown) {
+                getLogger().warning("Rank badges unavailable; update NovaraRanksTags to the glyph-compatible build: "+e.getMessage());
+                rankWarningShown=true;
+            }
+            return new ProgressionDisplay(1,"&7[I]",false);
+        }
+    }
+    private String prefixFor(Group group, ProgressionDisplay rank) {
+        if (!rank.integrated())return group.prefix();
+        // Old StarTab groups once printed RANK I..VII and overrode badge artwork.
+        // Suppress only those obsolete prefixes. Owner/staff prefixes remain.
+        if(group.id().matches("rank(?:10|[1-9])"))return "";
+        if(group.id().equalsIgnoreCase("default") &&
+            (group.prefix().equals("&7[RANK I] &f") || group.prefix().equals("&7[PLAYER] &f")))
+            return "";
+        return group.prefix();
+    }
+
+    private String expand(Player player, String raw, Group group, ProgressionDisplay rank) {
         String result = raw.replace("%logo%", getConfig().getString("logo", "&b&lSTARFALL"))
-            .replace("%prefix%", group.prefix).replace("%player%", player.getName())
-            .replace("%rank%", group.id.toUpperCase(Locale.ROOT))
+            .replace("%prefix%", prefixFor(group,rank)).replace("%player%", player.getName())
+            .replace("%novara_rank_badge%", rank.badge())
+            .replace("%rank%", rank.roman())
             .replace("%online%", Integer.toString(Bukkit.getOnlinePlayers().size()))
             .replace("%max_players%", Integer.toString(Bukkit.getMaxPlayers()))
             .replace("%ping%", Integer.toString(Math.max(0, player.getPing())))

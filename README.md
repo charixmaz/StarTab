@@ -1,30 +1,46 @@
-# StarTab — Starfall custom player list
+# StarfallTab — rank I-X pixel badges and player list
 
-Custom TAB header, player rank prefixes/sorting, player counts, ping, and footer for **Paper 26.1.2** (Java 25, Maven).
+The rank glyphs are **U+E101 through U+E10A**, exactly matching NovaraRanksTags.
+Both the Starfall logo (U+E7F1) and all 10 user-provided transparent
+11-pixel-tall Roman numeral badges ship in the **same** default.json.
 
-**Nexo is not required.** StarfallTab has its own complete Minecraft resource pack in `resourcepack/`. GitHub Actions publishes **two artifacts**:
-- `StarfallTab-jar` — Paper plugin
-- `StarfallTab-ResourcePack` — standalone Minecraft Java 26.1.2 resource-pack ZIP
+**Important:** Minecraft resource locations must be lowercase. Source
+`rank_I.png`/`rank_II.png`/`rank_III.png` have been included unchanged
+as `rank_i.png`/`rank_ii.png`/`rank_iii.png` in
+`resourcepack/assets/novara/textures/font/`.
 
-## Installation
-1. Download the plugin JAR and place it in `plugins/`. Restart your Paper server.
-2. Distribute the standalone resource pack:
-   - **If Nexo already manages your server's pack:** Copy `StarfallTab-ResourcePack.zip` to `plugins/Nexo/pack/external_packs/` and rebuild/resend your Nexo pack. No Nexo glyph configuration is necessary.
-   - **Without Nexo:** Host the ZIP over HTTPS and set `resource-pack=<url>` in `server.properties` (optionally `require-resource-pack=true`).
-   - Alternatively, load it with your existing multipack delivery plugin. Avoid pack managers overriding each other's resource-pack requests.
-3. The default `config.yml` logo is `logo: '&f'` (character **U+E7F1**, supplied by the pack). Change it to `logo: '&b&lSTARFALL'` for text-only display.
-4. Edit header/footer/ranks at `plugins/StarfallTab/config.yml`, then run `/stab reload`.
+When NovaraRanksTags is installed, StarTab resolves the **actual earned
+progression rank** using `progressionRank(UUID)` and
+`progressionBadge(UUID)`, not a separately assigned LuckPerms rank1..rank7
+TAB prefix. Players are sorted by their rank within staff/role tiers.
+`%novara_rank_badge%` renders the glyph before the name.
+`%rank%` returns the Roman numeral for the footer.
 
-## Custom logo PNG
-- Replace `resourcepack/assets/starfall/textures/font/starfall_logo.png` with your transparent **256 × 72 PNG** from Aseprite.
-- Font mapping and display dimensions: `resourcepack/assets/minecraft/font/default.json` — `height: 30`, `ascent: 25`.
-- Image is approximately **107 × 30 GUI pixels** at that height. GUI Scale changes the size in physical screen pixels.
-- Rebuild and resend the resource pack after editing the image.
-- Choose a different Unicode codepoint if U+E7F1 collides with another resource-pack glyph.
+The prior shipped `name-format: '%prefix%&f%player%'` is migrated on reload.
+Obsolete rank1..rank10 prefixes are suppressed when the rank integration is
+active; owner/admin/moderator prefixes remain. Custom name templates remain
+editable. If no matching NovaraRanksTags version is available, TAB falls
+back to text `[I]` until it reconnects.
 
-## Dev/build
-Run `mvn clean package` with JDK 25. The GitHub Actions workflow also packages the resource pack with ZIP root containing `pack.mcmeta` and `assets/`.
+## Install
 
-Use the vanilla TAB player list (column count varies with GUI scale/player count). Do not run another player-list format/header plugin at the same time.
+1. Install the updated `NovaraRanksTags` and `StarfallTab` JARs.
+2. Distribute **one merged resource pack** containing your other glyphs.
+   The packaged `resourcepack/` in this repo already combines rank badges
+   with StarfallTab's logo; no Nexo font definition is required.
+3. If Nexo, ForcePack or another manager already sends a pack, merge the
+   contents into that pack; avoid two plugins issuing competing packs.
+4. Restart and reconnect with the updated pack (recalculate the URL/hash).
+5. Run `/ranks` and `/stab reload`. Verify I, II and X on TAB plus chat.
+   Test user and staff accounts to confirm no duplicate `[RANK I]` text.
 
-There is no Nexo-specific content or dependency in this plugin. The standalone `resourcepack/` is the only image asset source. You may still use Nexo as an optional delivery system for that resource pack. The project builds in GitHub Actions; it still requires live-client testing.
+The bitmap dimensions are their original transparent PNG dimensions:
+I/V/X 10×11, II/IV/VI/IX 16×11, III/VII 22×11 and VIII 28×11.
+Font height 11 and ascent 9 preserve nearest-neighbor pixel detail.
+
+The pack does **not** replace the separate rank locked/unlocked menu icons
+or custom paid/staff badge artwork already managed by your main server pack.
+
+## Development
+Java 25, Paper 26.1.2. Run `mvn clean package`.
+Use the `resourcepack/` directory as the ZIP root when building a pack.

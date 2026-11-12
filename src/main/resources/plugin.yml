@@ -1,0 +1,35 @@
+name: StarfallTab
+main: dev.starfall.tab.StarfallTabPlugin
+version: '1.0.0'
+description: Custom Starfall TAB player list
+api-version: '26.1'
+author: Starfall
+softdepend: [LuckPerms, PlaceholderAPI, Nexo]
+commands:
+  starfalltab:
+    description: Starfall TAB commands
+    usage: /starfalltab <reload|info>
+    aliases: [stab]
+permissions:
+  starfalltab.admin:
+    default: op
+  starfalltab.group.owner:
+    default: false
+  starfalltab.group.admin:
+    default: false
+  starfalltab.group.moderator:
+    default: false
+  starfalltab.group.rank7:
+    default: false
+  starfalltab.group.rank6:
+    default: false
+  starfalltab.group.rank5:
+    default: false
+  starfalltab.group.rank4:
+    default: false
+  starfalltab.group.rank3:
+    default: false
+  starfalltab.group.rank2:
+    default: false
+  starfalltab.group.rank1:
+    default: false

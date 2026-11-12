@@ -1,0 +1,79 @@
+# Starfall TAB config — edit everything here; apply with /stab reload.
+# Use & legacy colors and &#RRGGBB for hex colors.
+# Custom logo: install included Nexo glyph files and PlaceholderAPI, then set
+# logo: '%nexo_starfall_tab_logo%'
+enabled: true
+refresh-ticks: 40
+logo: '&b&l✦ &f&lSTARFALL &b&l✦'
+header:
+  - '&8&m                                                     '
+  - ''
+  - '%logo%'
+  - '&7SURVIVAL &8• &bJOBS &8• &dQUESTS &8• &6ECONOMY'
+  - ''
+  - '&bPLAYERS &f%online%&8/&f%max_players%   &8│   &bPING &f%ping%ms'
+  - '&8&m                                                     '
+footer:
+  - '&8&m                                                     '
+  - '&7Welcome, &f%player% &8• &7Rank: &f%rank%'
+  - '&bdiscord.gg/yourserver'
+  - '&bplay.yourserver.example'
+  - '&8&m                                                     '
+name-format: '%prefix%&f%player%'
+# Lowest priority value appears first. Group permissions default false, even for OPs.
+groups:
+  owner:
+    priority: 0
+    permission: 'starfalltab.group.owner'
+    luckperms-groups: ['owner']
+    prefix: '&4&l[OWNER] &f'
+  admin:
+    priority: 10
+    permission: 'starfalltab.group.admin'
+    luckperms-groups: ['admin', 'administrator']
+    prefix: '&c&l[ADMIN] &f'
+  moderator:
+    priority: 20
+    permission: 'starfalltab.group.moderator'
+    luckperms-groups: ['moderator', 'mod']
+    prefix: '&d&l[MOD] &f'
+  rank7:
+    priority: 30
+    permission: 'starfalltab.group.rank7'
+    luckperms-groups: ['rank7', 'rank_7', 'rank-7']
+    prefix: '&#ffaf48&l[RANK VII] &f'
+  rank6:
+    priority: 40
+    permission: 'starfalltab.group.rank6'
+    luckperms-groups: ['rank6', 'rank_6', 'rank-6']
+    prefix: '&#ffcf69&l[RANK VI] &f'
+  rank5:
+    priority: 50
+    permission: 'starfalltab.group.rank5'
+    luckperms-groups: ['rank5', 'rank_5', 'rank-5']
+    prefix: '&5&l[RANK V] &f'
+  rank4:
+    priority: 60
+    permission: 'starfalltab.group.rank4'
+    luckperms-groups: ['rank4', 'rank_4', 'rank-4']
+    prefix: '&9&l[RANK IV] &f'
+  rank3:
+    priority: 70
+    permission: 'starfalltab.group.rank3'
+    luckperms-groups: ['rank3', 'rank_3', 'rank-3']
+    prefix: '&b&l[RANK III] &f'
+  rank2:
+    priority: 80
+    permission: 'starfalltab.group.rank2'
+    luckperms-groups: ['rank2', 'rank_2', 'rank-2']
+    prefix: '&a&l[RANK II] &f'
+  rank1:
+    priority: 90
+    permission: 'starfalltab.group.rank1'
+    luckperms-groups: ['rank1', 'rank_1', 'rank-1']
+    prefix: '&7&l[RANK I] &f'
+  default:
+    priority: 999
+    permission: ''
+    luckperms-groups: []
+    prefix: '&7[RANK I] &f'

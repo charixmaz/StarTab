@@ -2,7 +2,7 @@
 
 Custom TAB header, player rank prefixes/sorting, player counts, ping, and footer for **Paper 26.1.2** (Java 25, Maven).
 
-**Nexo is optional.** StarfallTab has its own complete Minecraft resource pack in `resourcepack/`. GitHub Actions publishes **two artifacts**:
+**Nexo is not required.** StarfallTab has its own complete Minecraft resource pack in `resourcepack/`. GitHub Actions publishes **two artifacts**:
 - `StarfallTab-jar` — Paper plugin
 - `StarfallTab-ResourcePack` — standalone Minecraft Java 26.1.2 resource-pack ZIP
 
@@ -27,4 +27,4 @@ Run `mvn clean package` with JDK 25. The GitHub Actions workflow also packages t
 
 Use the vanilla TAB player list (column count varies with GUI scale/player count). Do not run another player-list format/header plugin at the same time.
 
-Legacy Nexo glyph files remain in `nexo/` for backwards compatibility but are **not required**. The standalone `resourcepack/` is the preferred solution. The project builds in GitHub Actions; it still requires live-client testing.
+There is no Nexo-specific content or dependency in this plugin. The standalone `resourcepack/` is the only image asset source. You may still use Nexo as an optional delivery system for that resource pack. The project builds in GitHub Actions; it still requires live-client testing.

@@ -1,6 +1,0 @@
-# Put this at plugins/Nexo/glyphs/starfall_tab.yml
-starfall_tab_logo:
-  texture: 'starfall:font/starfall_logo.png'
-  font: 'minecraft:default'
-  ascent: 25
-  height: 30

@@ -1,10 +1,10 @@
 # Starfall TAB config — edit everything here; apply with /stab reload.
 # Use & legacy colors and &#RRGGBB for hex colors.
-# Custom logo: install included Nexo glyph files and PlaceholderAPI, then set
-# logo: '%nexo_starfall_tab_logo%'
+# Standalone pack glyph U+E7F1. Install StarfallTab-ResourcePack.zip first.
+# To disable the image: logo: '&b&lSTARFALL'
 enabled: true
 refresh-ticks: 40
-logo: '&b&l✦ &f&lSTARFALL &b&l✦'
+logo: '&f'
 header:
   - '&8&m                                                     '
   - ''

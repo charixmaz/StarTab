@@ -20,3 +20,13 @@ jobs:
         with:
           name: StarfallTab-jar
           path: target/StarfallTab-1.0.0.jar
+
+      - name: Package standalone Starfall resource pack
+        shell: bash
+        run: |
+          cd resourcepack
+          zip -q -r ../StarfallTab-ResourcePack.zip pack.mcmeta assets
+      - uses: actions/upload-artifact@v4
+        with:
+          name: StarfallTab-ResourcePack
+          path: StarfallTab-ResourcePack.zip

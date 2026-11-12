@@ -1,0 +1,13 @@
+{
+  "providers": [
+    {
+      "type": "bitmap",
+      "file": "starfall:font/starfall_logo.png",
+      "ascent": 25,
+      "height": 30,
+      "chars": [
+        ""
+      ]
+    }
+  ]
+}
